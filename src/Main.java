@@ -44,6 +44,8 @@ class Menu{
         }
         if (escolha == 4)
         {
+            Eventos meu_evento = new Eventos();
+            meu_evento.Consultar();
         }
     }
 }
@@ -91,12 +93,13 @@ class Usuario{
 }
 class Usuarios{
 
+    ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
     public void Inserir(){
 
         String c, n, f;
 
         Scanner teclado = new Scanner(System.in);
-        ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+
 
         char controle = 's';
         do{
@@ -118,11 +121,12 @@ class Usuarios{
         m_menu.MenuPrincipal();
     }
     public void Consultar() {
-        for (Usuario usuario : 'usuarios');
-        System.out.println("Codigo: " + 'usuarios'.getCodigo());
-        System.out.println("Nome: " + 'usuarios'.getNome());
-        System.out.println("Fone: " + 'usuarios'.getFone());
-        System.out.println();
+        System.out.println("Entrou");
+        for  (Usuario u : usuarios ) {
+        System.out.println(u);
+        System.out.println("Codigo: " + u.getCodigo());
+        System.out.println("Nome: " + u.getNome());
+        System.out.println("Fone: " + u.getFone());
         }
     }
 }
@@ -132,9 +136,67 @@ class Evento {
     public String Categoria;
     public String Horario;
     public String Descricao;
+
+    public Evento(String n, String e, String c, String h, String d) {
+        this.setNome(n);
+        this.setEndereco(e);
+        this.setCategoria(c);
+        this.setHorario(h);
+        this.setDescricao(d);
+    }
+
+    public Evento() {
+
+    }
+
+    public String getNome() {
+        return Nome;
+    }
+
+    public void setNome(String nome) {
+        this.Nome = Nome;
+    }
+
+    public String getEndereco() {
+        return Endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.Endereco = Endereco;
+    }
+
+    public String getCategoria() {
+        return Categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.Categoria = Categoria;
+    }
+
+    public String getHorario() {
+        return Horario;
+    }
+
+    public void setHorario(String horario) {
+        this.Horario = Horario;
+    }
+
+    public String getDescricao() {
+        return Descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.Descricao = Descricao;
+    }
+
+    @Override
+    public String toString(){
+        return "Nome: " + this.getNome() + "Endereco: " + this.getEndereco() + "Categoria: " + this.getCategoria() + "Horario: " + this.getHorario() + "Descricao: " + this.getDescricao();
+    }
 }
 
 class Eventos {
+    ArrayList<Evento> eventos = new ArrayList<Evento>();
     Evento e1 = new Evento();
     public void Menu(){
 
@@ -178,5 +240,16 @@ class Eventos {
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
 
+    }
+    public void Consultar() {
+        System.out.println("Entrou");
+        for (Evento e : eventos ) {
+            System.out.println(e);
+            System.out.println("Nome: " + e.getNome());
+            System.out.println("Endereco: " + e.getEndereco());
+            System.out.println("Categoria: " + e.getCategoria());
+            System.out.println("Horario: " + e.getHorario());
+            System.out.println("Descricao: " + e.getDescricao());
+        }
     }
 }
