@@ -16,6 +16,7 @@ class Menu{
 
         Scanner teclado = new Scanner(System.in);
 
+
         System.out.println("Sistema de Eventos da Cidade Joinville");
         int escolha = 0;
         do{
@@ -93,7 +94,7 @@ class Usuario{
 }
 class Usuarios{
 
-    ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+    ArrayList usuarios = new ArrayList();
     public void Inserir(){
 
         String c, n, f;
@@ -112,22 +113,25 @@ class Usuarios{
             Usuario u1 = new Usuario(c,n,f);
             usuarios.add(u1);
 
+
             System.out.println("Deseja cadastrar outro usuário? S-SiM N=Não");
             controle = teclado.next().charAt(0);
         }while (controle == 's' || controle == 'S');
+
+        for (Usuario u : usuarios)
+        {
+            System.out.println("Codigo: " + u.getCodigo());
+            System.out.println("Nome: " + u.getNome());
+            System.out.println("Fone: " + u.getFone());
+        }
 
         /*Chama menu Principal*/
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
     }
+
     public void Consultar() {
         System.out.println("Entrou");
-        for  (Usuario u : usuarios ) {
-        System.out.println(u);
-        System.out.println("Codigo: " + u.getCodigo());
-        System.out.println("Nome: " + u.getNome());
-        System.out.println("Fone: " + u.getFone());
-        }
     }
 }
 class Evento {
@@ -143,10 +147,6 @@ class Evento {
         this.setCategoria(c);
         this.setHorario(h);
         this.setDescricao(d);
-    }
-
-    public Evento() {
-
     }
 
     public String getNome() {
@@ -197,7 +197,6 @@ class Evento {
 
 class Eventos {
     ArrayList<Evento> eventos = new ArrayList<Evento>();
-    Evento e1 = new Evento();
     public void Menu(){
 
         Scanner teclado = new Scanner(System.in);
@@ -218,20 +217,31 @@ class Eventos {
             meu_evento.Excluir();
         }
     }
-    void Inserir(){
+    public void Inserir(){
+
+        String n, e, c, h, d;
 
         Scanner teclado = new Scanner(System.in);
 
-        System.out.println("Entre com Nome do Evento:");
-        e1.Nome = teclado.nextLine();
-        System.out.println("Entre com Endereço do Evento:");
-        e1.Endereco = teclado.nextLine();
-        System.out.println("Escolha a Categoria (1 - Festa de aniverário, 2 - Casamento, 3 - Show ):");
-        e1.Categoria = teclado.nextLine();
-        System.out.println("Entre com horário do Evento:");
-        e1.Horario = teclado.nextLine();
-        System.out.println("Entre com descrição do Evento:");
-        e1.Descricao = teclado.nextLine();
+        char controle = 's';
+        do{
+            System.out.println("Entre com um Nome:");
+            n = teclado.nextLine();
+            System.out.println("Entre com um Endereço:");
+            e = teclado.nextLine();
+            System.out.println("Entre com uma Categoria:");
+            c = teclado.nextLine();
+            System.out.println("Entre com um Horario:");
+            h = teclado.nextLine();
+            System.out.println("Entre com um Descrição:");
+            d = teclado.nextLine();
+
+            Evento e1 = new Evento(n,e,c,h,d);
+            eventos.add(e1);
+
+            System.out.println("Deseja cadastrar outro evento? S-SiM N=Não");
+            controle = teclado.next().charAt(0);
+        }while (controle == 's' || controle == 'S');
 
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
