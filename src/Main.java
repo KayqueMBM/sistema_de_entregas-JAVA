@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
@@ -10,11 +13,18 @@ public class Main {
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
 
-        File arquivo = new File("/Users/PC/Documents/events.data.txt");
-        Scanner ler = new Scanner(arquivo);
+        String nomeDoArquivo = "events.data.txt";
+        String conteudoParaGravar = "Este é o conteúdo que será gravado no arquivo.";
 
-        while (ler.hasNextLine()) {
-            System.out.println(ler.nextLine());
+        gravarArquivo(nomeDoArquivo, conteudoParaGravar);
+    }
+
+    public static void gravarArquivo(String nomeDoArquivo, String conteudo) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeDoArquivo))) {
+            writer.write(conteudo);
+            System.out.println("Arquivo gravado com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao gravar arquivo: " + e.getMessage());
         }
 
     }
