@@ -1,12 +1,21 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
+
+        File arquivo = new File("/Users/PC/Documents/events.data.txt");
+        Scanner ler = new Scanner(arquivo);
+
+        while (ler.hasNextLine()) {
+            System.out.println(ler.nextLine());
+        }
 
     }
 }
@@ -21,12 +30,10 @@ class Menu{
         int escolha = 0;
         do{
             System.out.println(" 1 - Cadastro de Usuários");
-            System.out.println(" 2 - Consulta de Usuários");
-            System.out.println(" 3 - Cadastro de Eventos");
-            System.out.println(" 4 - Consulta de Eventos");
+            System.out.println(" 2 - Cadastro de Eventos");
             System.out.println(" Digite sua opção: ");
             escolha = teclado.nextInt();
-        }while (escolha != 1 && escolha != 2 && escolha != 3 && escolha != 4);
+        }while (escolha != 1 && escolha != 2);
 
         if (escolha == 1)
         {
@@ -35,26 +42,16 @@ class Menu{
         }
         if (escolha == 2)
         {
-            Usuarios meu_usuario = new Usuarios();
-            meu_usuario.Consultar();
-        }
-        if (escolha == 3)
-        {
             Eventos meu_evento = new Eventos();
             meu_evento.Menu();
-        }
-        if (escolha == 4)
-        {
-            Eventos meu_evento = new Eventos();
-            meu_evento.Consultar();
         }
     }
 }
 class Usuario{
 
-    public String Codigo;
-    public String Nome;
-    public String Fone;
+    private String Codigo;
+    private String Nome;
+    private String Fone;
 
     public Usuario(String c, String n, String f) {
         this.setCodigo(c);
@@ -67,7 +64,7 @@ class Usuario{
     }
 
     public void setCodigo(String codigo) {
-        this.Codigo = Codigo;
+        this.Codigo = codigo;
     }
 
     public String getNome() {
@@ -75,7 +72,7 @@ class Usuario{
     }
 
     public void setNome(String nome) {
-        this.Nome = Nome;
+        this.Nome = nome;
     }
 
     public String getFone() {
@@ -83,51 +80,40 @@ class Usuario{
     }
 
     public void setFone(String fone) {
-        this.Fone = Fone;
+        this.Fone = fone;
     }
 
     @Override
     public String toString(){
-        return "Codigo: " + this.getCodigo() + "Nome: " + this.getNome() + "Fone: " + this.getFone();
+        return "Codigo: " + this.getCodigo() + " - Nome: " + this.getNome() + " - Fone: " + this.getFone();
     }
 
 }
 class Usuarios{
 
-    ArrayList usuarios = new ArrayList();
-    public void Inserir(){
 
+    public void Inserir(){
+        Scanner teclado = new Scanner(System.in);
+        ArrayList<Usuario> lista = new ArrayList<Usuario>();
         String c, n, f;
 
-        Scanner teclado = new Scanner(System.in);
-
-
         char controle = 's';
-        do{
+        do {
             System.out.println("Entre com um Codigo:");
-            c = teclado.nextLine();
+            c = teclado.next();
             System.out.println("Entre com um Nome:");
-            n = teclado.nextLine();
+            n = teclado.next();
             System.out.println("Entre com um Telefone:");
-            f = teclado.nextLine();
-            Usuario u1 = new Usuario(c,n,f);
-            usuarios.add(u1);
-
-
-            System.out.println("Deseja cadastrar outro usuário? S-SiM N=Não");
+            f = teclado.next();
+            Usuario p = new Usuario(c,n, f);
+            lista.add(p);
+            System.out.println("Deseja cadastrar outro usuário? s ou S para sim.");
             controle = teclado.next().charAt(0);
-        }while (controle == 's' || controle == 'S');
+        }while(controle == 's' || controle == 'S');
 
-        for (Usuario u : usuarios)
-        {
-            System.out.println("Codigo: " + u.getCodigo());
-            System.out.println("Nome: " + u.getNome());
-            System.out.println("Fone: " + u.getFone());
+        for (Usuario i: lista){
+            System.out.println(i.toString());
         }
-
-        /*Chama menu Principal*/
-        Menu m_menu = new Menu();
-        m_menu.MenuPrincipal();
     }
 
     public void Consultar() {
@@ -154,7 +140,7 @@ class Evento {
     }
 
     public void setNome(String nome) {
-        this.Nome = Nome;
+        this.Nome = nome;
     }
 
     public String getEndereco() {
@@ -162,7 +148,7 @@ class Evento {
     }
 
     public void setEndereco(String endereco) {
-        this.Endereco = Endereco;
+        this.Endereco = endereco;
     }
 
     public String getCategoria() {
@@ -170,7 +156,7 @@ class Evento {
     }
 
     public void setCategoria(String categoria) {
-        this.Categoria = Categoria;
+        this.Categoria = categoria;
     }
 
     public String getHorario() {
@@ -178,7 +164,7 @@ class Evento {
     }
 
     public void setHorario(String horario) {
-        this.Horario = Horario;
+        this.Horario = horario;
     }
 
     public String getDescricao() {
@@ -186,12 +172,12 @@ class Evento {
     }
 
     public void setDescricao(String descricao) {
-        this.Descricao = Descricao;
+        this.Descricao = descricao;
     }
 
     @Override
     public String toString(){
-        return "Nome: " + this.getNome() + "Endereco: " + this.getEndereco() + "Categoria: " + this.getCategoria() + "Horario: " + this.getHorario() + "Descricao: " + this.getDescricao();
+        return "Nome: " + this.getNome() + " - Endereco: " + this.getEndereco() + " - Categoria: " + this.getCategoria() + " - Horario: " + this.getHorario() + " - Descricao: " + this.getDescricao();
     }
 }
 
@@ -203,9 +189,10 @@ class Eventos {
         int escolha = 0;
         do{
             System.out.println(" 1 - Inserir");
+            System.out.println(" 2 - Participar");
             System.out.println(" Digite sua opção: ");
             escolha = teclado.nextInt();
-        }while (escolha != 1);
+        }while (escolha != 1 && escolha != 2);
 
         Eventos meu_evento = new Eventos();
         if (escolha == 1)
@@ -214,7 +201,7 @@ class Eventos {
         }
         if (escolha == 2)
         {
-            meu_evento.Excluir();
+            meu_evento.Participar();
         }
     }
     public void Inserir(){
@@ -222,19 +209,23 @@ class Eventos {
         String n, e, c, h, d;
 
         Scanner teclado = new Scanner(System.in);
+        String[] categorias = {"1-Festa infantil", "2-Casamento", "3-Show"};
 
         char controle = 's';
         do{
-            System.out.println("Entre com um Nome:");
-            n = teclado.nextLine();
-            System.out.println("Entre com um Endereço:");
-            e = teclado.nextLine();
-            System.out.println("Entre com uma Categoria:");
-            c = teclado.nextLine();
-            System.out.println("Entre com um Horario:");
-            h = teclado.nextLine();
-            System.out.println("Entre com um Descrição:");
-            d = teclado.nextLine();
+            System.out.print("Entre com um Nome:");
+            n = teclado.next();
+            System.out.print("Entre com um Endereço:");
+            e = teclado.next();
+            System.out.print("Entre com uma Categoria: ");
+            for(int i = 0 ; i < 3; i++){
+                System.out.println(categorias[i]);
+            }
+            c = teclado.next();
+            System.out.print("Entre com um Horario:");
+            h = teclado.next();
+            System.out.print("Entre com um Descrição:");
+            d = teclado.next();
 
             Evento e1 = new Evento(n,e,c,h,d);
             eventos.add(e1);
@@ -243,23 +234,28 @@ class Eventos {
             controle = teclado.next().charAt(0);
         }while (controle == 's' || controle == 'S');
 
-        Menu m_menu = new Menu();
-        m_menu.MenuPrincipal();
+        for (Evento i: eventos){
+            System.out.println(i.toString());
+        }
+
+        Eventos meu_evento = new Eventos();
+        meu_evento.Menu();
     }
     void Excluir(){
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
 
     }
-    public void Consultar() {
-        System.out.println("Entrou");
+    public void Participar() {
+        System.out.println("Entrou:");
         for (Evento e : eventos ) {
-            System.out.println(e);
             System.out.println("Nome: " + e.getNome());
             System.out.println("Endereco: " + e.getEndereco());
             System.out.println("Categoria: " + e.getCategoria());
             System.out.println("Horario: " + e.getHorario());
             System.out.println("Descricao: " + e.getDescricao());
+            System.out.println("Participar? S-SIM N-Não: ");
+
         }
     }
 }
