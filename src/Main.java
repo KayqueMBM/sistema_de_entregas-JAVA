@@ -1,6 +1,5 @@
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
@@ -15,7 +14,7 @@ public class Main {
 }
 
 class Menu{
-    public void MenuPrincipal(){
+    public void MenuPrincipal() throws FileNotFoundException {
 
         Scanner teclado = new Scanner(System.in);
 
@@ -29,7 +28,7 @@ class Menu{
             System.out.println(" 3 - Participar de Eventos");
             System.out.println(" Digite sua opção: ");
             escolha = teclado.nextInt();
-        }while (escolha != 1 && escolha != 2 && escolha != 3));
+        }while (escolha != 1 && escolha != 2 && escolha != 3);
 
         if (escolha == 1)
         {
@@ -40,6 +39,11 @@ class Menu{
         {
             Eventos meu_evento = new Eventos();
             meu_evento.Inserir();
+        }
+        if (escolha == 3)
+        {
+            Eventos meu_evento = new Eventos();
+            meu_evento.Participar();
         }
     }
 }
@@ -53,6 +57,19 @@ class Arquivo{
             System.err.println("Erro ao gravar arquivo: " + e.getMessage());
         }
     }
+
+    //Ler o arquivo//
+   public String Ler(String nomedoArquivo) throws FileNotFoundException
+   {
+       File file = new File(nomedoArquivo);
+       Scanner scan = new Scanner(file);
+
+       String conteudo = "";
+       while(scan.hasNextLine()) {
+           conteudo = conteudo.concat(scan.nextLine() + "\n");
+       }
+       return conteudo;
+   }
 }
 class Usuario{
 
@@ -232,8 +249,12 @@ class Eventos {
 
     }
 
-    public void Participar() {
+    public void Participar() throws FileNotFoundException {
         // Ler o arquivo eventos.data
+        Arquivo arq = new Arquivo();
+        String retorno;
+        retorno = arq.Ler("c:\\temp\\eventos.data.txt");
+        System.out.println(retorno);
         // mostrar na tela o conteudo do arquivo + opcao participar
     }
 }
