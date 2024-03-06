@@ -9,24 +9,8 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-
         Menu m_menu = new Menu();
         m_menu.MenuPrincipal();
-
-        String nomeDoArquivo = "events.data.txt";
-        String conteudoParaGravar = "Este é o conteúdo que será gravado no arquivo.";
-
-        gravarArquivo(nomeDoArquivo, conteudoParaGravar);
-    }
-
-    public static void gravarArquivo(String nomeDoArquivo, String conteudo) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeDoArquivo))) {
-            writer.write(conteudo);
-            System.out.println("Arquivo gravado com sucesso.");
-        } catch (IOException e) {
-            System.err.println("Erro ao gravar arquivo: " + e.getMessage());
-        }
-
     }
 }
 
@@ -37,13 +21,15 @@ class Menu{
 
 
         System.out.println("Sistema de Eventos da Cidade Joinville");
+        System.out.println("MENU");
         int escolha = 0;
         do{
             System.out.println(" 1 - Cadastro de Usuários");
             System.out.println(" 2 - Cadastro de Eventos");
+            System.out.println(" 3 - Participar de Eventos");
             System.out.println(" Digite sua opção: ");
             escolha = teclado.nextInt();
-        }while (escolha != 1 && escolha != 2);
+        }while (escolha != 1 && escolha != 2 && escolha != 3));
 
         if (escolha == 1)
         {
@@ -53,7 +39,18 @@ class Menu{
         if (escolha == 2)
         {
             Eventos meu_evento = new Eventos();
-            meu_evento.Menu();
+            meu_evento.Inserir();
+        }
+    }
+}
+class Arquivo{
+
+    public void Gravar(String nomedoArquivo, String conteudo){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomedoArquivo))) {
+            writer.write(conteudo);
+            System.out.println("Arquivo gravado com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao gravar arquivo: " + e.getMessage());
         }
     }
 }
@@ -121,9 +118,12 @@ class Usuarios{
             controle = teclado.next().charAt(0);
         }while(controle == 's' || controle == 'S');
 
+        Arquivo arq = new Arquivo();
+        String texto = "";
         for (Usuario i: lista){
-            System.out.println(i.toString());
+            texto = texto.concat(i.toString() + "\n");
         }
+        arq.Gravar("c:\\temp\\usuarios.data.txt", texto);
     }
 
     public void Consultar() {
@@ -193,27 +193,6 @@ class Evento {
 
 class Eventos {
     ArrayList<Evento> eventos = new ArrayList<Evento>();
-    public void Menu(){
-
-        Scanner teclado = new Scanner(System.in);
-        int escolha = 0;
-        do{
-            System.out.println(" 1 - Inserir");
-            System.out.println(" 2 - Participar");
-            System.out.println(" Digite sua opção: ");
-            escolha = teclado.nextInt();
-        }while (escolha != 1 && escolha != 2);
-
-        Eventos meu_evento = new Eventos();
-        if (escolha == 1)
-        {
-            meu_evento.Inserir();
-        }
-        if (escolha == 2)
-        {
-            meu_evento.Participar();
-        }
-    }
     public void Inserir(){
 
         String n, e, c, h, d;
@@ -244,28 +223,17 @@ class Eventos {
             controle = teclado.next().charAt(0);
         }while (controle == 's' || controle == 'S');
 
+        Arquivo arq = new Arquivo();
+        String texto = "";
         for (Evento i: eventos){
-            System.out.println(i.toString());
+            texto = texto.concat(i.toString() + "\n");
         }
-
-        Eventos meu_evento = new Eventos();
-        meu_evento.Menu();
-    }
-    void Excluir(){
-        Menu m_menu = new Menu();
-        m_menu.MenuPrincipal();
+        arq.Gravar("c:\\temp\\eventos.data.txt", texto);
 
     }
+
     public void Participar() {
-        System.out.println("Entrou:");
-        for (Evento e : eventos ) {
-            System.out.println("Nome: " + e.getNome());
-            System.out.println("Endereco: " + e.getEndereco());
-            System.out.println("Categoria: " + e.getCategoria());
-            System.out.println("Horario: " + e.getHorario());
-            System.out.println("Descricao: " + e.getDescricao());
-            System.out.println("Participar? S-SIM N-Não: ");
-
-        }
+        // Ler o arquivo eventos.data
+        // mostrar na tela o conteudo do arquivo + opcao participar
     }
 }
