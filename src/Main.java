@@ -5,45 +5,35 @@ import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
-        Menu m_menu = new Menu();
-        m_menu.MenuPrincipal();
+    static Scanner sc = new Scanner(System.in);
+    static Usuario usuario;
+    public static void main(String[] args) {
+        opcoesIniciais();
     }
-}
 
-class Menu{
-    public void MenuPrincipal() throws FileNotFoundException {
+    public static void opcoesIniciais(){
+        System.out.println("Sistema de Eventos da Cidade Joinville - MENU");
+        System.out.println("""
+                1- Cadastro de Usuário
+                2- Cadastro de Evento
+                3- Login
+                Escolha a ação:
+                """);
+        Integer opcao = sc.nextInt();
 
-        Scanner teclado = new Scanner(System.in);
-
-
-        System.out.println("Sistema de Eventos da Cidade Joinville");
-        System.out.println("MENU");
-        int escolha = 0;
-        do{
-            System.out.println(" 1 - Cadastro de Usuários");
-            System.out.println(" 2 - Cadastro de Eventos");
-            System.out.println(" 3 - Participar de Eventos");
-            System.out.println(" Digite sua opção: ");
-            escolha = teclado.nextInt();
-        }while (escolha != 1 && escolha != 2 && escolha != 3);
-
-        if (escolha == 1)
-        {
-            Usuarios meu_usuario = new Usuarios();
-            meu_usuario.Inserir();
-        }
-        if (escolha == 2)
-        {
-            Eventos meu_evento = new Eventos();
-            meu_evento.Inserir();
-        }
-        if (escolha == 3)
-        {
-            Eventos meu_evento = new Eventos();
-            meu_evento.Participar();
+        switch(opcao){
+            case 1:
+                Usuarios meu_usuario = new Usuarios();
+                meu_usuario.Inserir();
+            case 2:
+                Eventos meu_evento = new Eventos();
+                meu_evento.Inserir();
+            case 3:
+                //login();
         }
     }
 }
@@ -59,36 +49,28 @@ class Arquivo{
     }
 
     //Ler o arquivo//
-   public String Ler(String nomedoArquivo) throws FileNotFoundException
-   {
-       File file = new File(nomedoArquivo);
-       Scanner scan = new Scanner(file);
+    public String Ler(String nomedoArquivo) throws FileNotFoundException
+    {
+        File file = new File(nomedoArquivo);
+        Scanner scan = new Scanner(file);
 
-       String conteudo = "";
-       while(scan.hasNextLine()) {
-           conteudo = conteudo.concat(scan.nextLine() + "\n");
-       }
-       return conteudo;
-   }
+        String conteudo = "";
+        while(scan.hasNextLine()) {
+            conteudo = conteudo.concat(scan.nextLine() + "\n");
+        }
+        return conteudo;
+    }
 }
 class Usuario{
 
-    private String Codigo;
     private String Nome;
-    private String Fone;
+    private String CPF;
+    private String Senha;
 
-    public Usuario(String c, String n, String f) {
-        this.setCodigo(c);
-        this.setNome(n);
-        this.setFone(f);
-    }
-
-    public String getCodigo() {
-        return Codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.Codigo = codigo;
+    public Usuario(String nome, String cpf, String senha) {
+        this.setNome(nome);
+        this.setCpf(cpf);
+        this.setSenha(senha);
     }
 
     public String getNome() {
@@ -99,17 +81,25 @@ class Usuario{
         this.Nome = nome;
     }
 
-    public String getFone() {
-        return Fone;
+    public String getCpf() {
+        return CPF;
     }
 
-    public void setFone(String fone) {
-        this.Fone = fone;
+    public void setCpf(String cpf) {
+        this.CPF = cpf;
+    }
+
+    public String getSenha() {
+        return Senha;
+    }
+
+    public void setSenha(String senha) {
+        this.Senha = senha;
     }
 
     @Override
     public String toString(){
-        return "Codigo: " + this.getCodigo() + " - Nome: " + this.getNome() + " - Fone: " + this.getFone();
+        return "Nome: " + this.getNome() + " - CPF: " + this.getCpf() + " - Senha: " + this.getSenha();
     }
 
 }
@@ -119,21 +109,15 @@ class Usuarios{
     public void Inserir(){
         Scanner teclado = new Scanner(System.in);
         ArrayList<Usuario> lista = new ArrayList<Usuario>();
-        String c, n, f;
 
-        char controle = 's';
-        do {
-            System.out.println("Entre com um Codigo:");
-            c = teclado.next();
-            System.out.println("Entre com um Nome:");
-            n = teclado.next();
-            System.out.println("Entre com um Telefone:");
-            f = teclado.next();
-            Usuario p = new Usuario(c,n, f);
-            lista.add(p);
-            System.out.println("Deseja cadastrar outro usuário? s ou S para sim.");
-            controle = teclado.next().charAt(0);
-        }while(controle == 's' || controle == 'S');
+        System.out.println("Entre com Nome:");
+        String nome = teclado.next();
+        System.out.println("Entre com CPF:");
+        String cpf = teclado.next();
+        System.out.println("Entre com Senha:");
+        String senha = teclado.next();
+        Usuario p = new Usuario(nome,cpf,senha);
+        lista.add(p);
 
         Arquivo arq = new Arquivo();
         String texto = "";
@@ -151,15 +135,15 @@ class Evento {
     public String Nome;
     public String Endereco;
     public String Categoria;
-    public String Horario;
+    public LocalDateTime DataHora;
     public String Descricao;
 
-    public Evento(String n, String e, String c, String h, String d) {
-        this.setNome(n);
-        this.setEndereco(e);
-        this.setCategoria(c);
-        this.setHorario(h);
-        this.setDescricao(d);
+    public Evento(String nome, String endereco, String categoria, LocalDateTime datahora, String descricao) {
+        this.setNome(nome);
+        this.setEndereco(endereco);
+        this.setCategoria(categoria);
+        this.setDataHora(datahora);
+        this.setDescricao(descricao);
     }
 
     public String getNome() {
@@ -186,12 +170,12 @@ class Evento {
         this.Categoria = categoria;
     }
 
-    public String getHorario() {
-        return Horario;
+    public LocalDateTime getDataHora() {
+        return DataHora;
     }
 
-    public void setHorario(String horario) {
-        this.Horario = horario;
+    public void setDataHora(LocalDateTime datahora) {
+        this.DataHora = datahora;
     }
 
     public String getDescricao() {
@@ -204,7 +188,7 @@ class Evento {
 
     @Override
     public String toString(){
-        return "Nome: " + this.getNome() + " - Endereco: " + this.getEndereco() + " - Categoria: " + this.getCategoria() + " - Horario: " + this.getHorario() + " - Descricao: " + this.getDescricao();
+        return "Nome: " + this.getNome() + " - Endereco: " + this.getEndereco() + " - Categoria: " + this.getCategoria() + " - Data/Hora: " + this.getDataHora() + " - Descricao: " + this.getDescricao();
     }
 }
 
@@ -212,28 +196,31 @@ class Eventos {
     ArrayList<Evento> eventos = new ArrayList<Evento>();
     public void Inserir(){
 
-        String n, e, c, h, d;
-
         Scanner teclado = new Scanner(System.in);
         String[] categorias = {"1-Festa infantil", "2-Casamento", "3-Show"};
 
         char controle = 's';
         do{
             System.out.print("Entre com um Nome:");
-            n = teclado.next();
+            String nome = teclado.next();
             System.out.print("Entre com um Endereço:");
-            e = teclado.next();
+            String endereco = teclado.next();
             System.out.print("Entre com uma Categoria: ");
             for(int i = 0 ; i < 3; i++){
                 System.out.println(categorias[i]);
             }
-            c = teclado.next();
-            System.out.print("Entre com um Horario:");
-            h = teclado.next();
+            String categoria = teclado.next();
+            System.out.println("Entre com a data do evento no formato dd/MM/yyyy:");
+            String dataEventoStr = teclado.next();
+            System.out.println("Entre com o horário no seguinte formato HH:mm:ss");
+            String horario = teclado.next();
             System.out.print("Entre com um Descrição:");
-            d = teclado.next();
+            String descricao = teclado.next();
 
-            Evento e1 = new Evento(n,e,c,h,d);
+            String dateTimeStr = dataEventoStr + " " + horario;
+            LocalDateTime dataHora = LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+            Evento e1 = new Evento(nome,endereco,categoria,dataHora,descricao);
             eventos.add(e1);
 
             System.out.println("Deseja cadastrar outro evento? S-SiM N=Não");
