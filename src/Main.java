@@ -10,12 +10,33 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
     static Scanner sc = new Scanner(System.in);
-    static Usuario usuario;
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+
         opcoesIniciais();
     }
 
-    public static void opcoesIniciais(){
+    public static void opcoesLogin(){
+        System.out.println("""
+                1- Participar de eventos
+                2- Eventos já confirmados
+                3- Cancelar participação em evento
+                Escolha a ação:
+                """);
+        int opcao = sc.nextInt();
+
+        switch(opcao){
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
+
+    }
+    public static void opcoesIniciais() throws FileNotFoundException {
         System.out.println("Sistema de Eventos da Cidade Joinville - MENU");
         System.out.println("""
                 1- Cadastro de Usuário
@@ -23,17 +44,40 @@ public class Main {
                 3- Login
                 Escolha a ação:
                 """);
-        Integer opcao = sc.nextInt();
+        int opcao = sc.nextInt();
 
         switch(opcao){
             case 1:
                 Usuarios meu_usuario = new Usuarios();
                 meu_usuario.Inserir();
+                opcoesIniciais();
+                break;
             case 2:
                 Eventos meu_evento = new Eventos();
                 meu_evento.Inserir();
+                opcoesIniciais();
+                break;
             case 3:
-                //login();
+                login();
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
+
+    }
+    public static void login() throws FileNotFoundException {
+        System.out.println("Digite seu CPF:");
+        String cpf = sc.next();
+        System.out.println("Digite sua senha:");
+        String senha = sc.next();
+
+        Usuarios usuario = new Usuarios();
+        if (usuario.Estalogado(cpf,senha)) {
+            System.out.println("Login bem-sucedido.");
+            opcoesLogin();
+        } else {
+            System.out.println("CPF ou senha incorretos.");
+            opcoesIniciais();
         }
     }
 }
@@ -105,7 +149,6 @@ class Usuario{
 }
 class Usuarios{
 
-
     public void Inserir(){
         Scanner teclado = new Scanner(System.in);
         ArrayList<Usuario> lista = new ArrayList<Usuario>();
@@ -119,16 +162,31 @@ class Usuarios{
         Usuario p = new Usuario(nome,cpf,senha);
         lista.add(p);
 
+        //Gravar usuario no arquivo texto
         Arquivo arq = new Arquivo();
         String texto = "";
+
         for (Usuario i: lista){
             texto = texto.concat(i.toString() + "\n");
         }
         arq.Gravar("c:\\temp\\usuarios.data.txt", texto);
+
     }
 
-    public void Consultar() {
-        System.out.println("Entrou");
+    public boolean Estalogado(String cpf, String senha) throws FileNotFoundException {
+
+        Arquivo arq = new Arquivo();
+        String texto = arq.Ler("c:\\temp\\usuarios.data.txt");
+        Boolean temcpf = texto.contains(cpf);
+        Boolean temsenha = texto.contains(cpf);
+
+        Boolean ret = true;
+        if (temcpf && temsenha){
+            ret = true;
+        }else{
+            ret = false;
+        }
+        return ret;
     }
 }
 class Evento {
