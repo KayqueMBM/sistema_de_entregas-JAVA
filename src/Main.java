@@ -15,7 +15,8 @@ public class Main {
         opcoesIniciais();
     }
 
-    public static void opcoesLogin(){
+    public static void opcoesLogin() throws FileNotFoundException {
+
         System.out.println("""
                 1- Participar de eventos
                 2- Eventos já confirmados
@@ -26,6 +27,9 @@ public class Main {
 
         switch(opcao){
             case 1:
+                Eventos eventos = new Eventos(); // Instância da classe Eventos para acessar os eventos cadastrados
+                int ret = eventos.Participar(); // Exibir lista de eventos e permitir participação
+                if (ret == 0) { opcoesLogin();}
                 break;
             case 2:
                 break;
@@ -178,7 +182,7 @@ class Usuarios{
         Arquivo arq = new Arquivo();
         String texto = arq.Ler("c:\\temp\\usuarios.data.txt");
         Boolean temcpf = texto.contains(cpf);
-        Boolean temsenha = texto.contains(cpf);
+        Boolean temsenha = texto.contains(senha);
 
         Boolean ret = true;
         if (temcpf && temsenha){
@@ -252,6 +256,7 @@ class Evento {
 
 class Eventos {
     ArrayList<Evento> eventos = new ArrayList<Evento>();
+    Scanner teclado = new Scanner(System.in);
     public void Inserir(){
 
         Scanner teclado = new Scanner(System.in);
@@ -294,12 +299,26 @@ class Eventos {
 
     }
 
-    public void Participar() throws FileNotFoundException {
+    public int Participar() throws FileNotFoundException {
         // Ler o arquivo eventos.data
         Arquivo arq = new Arquivo();
-        String retorno;
-        retorno = arq.Ler("c:\\temp\\eventos.data.txt");
+        String retorno = arq.Ler("c:\\temp\\eventos.data.txt");
         System.out.println(retorno);
-        // mostrar na tela o conteudo do arquivo + opcao participar
+        // Pedir ao usuário que digite o nome do evento para participar
+        System.out.println("Digite o nome do evento para participar (ou digite 0 para sair):");
+        String nomeEvento = teclado.next();
+
+        // Verificar se o usuário digitou 0 para sair
+        if (nomeEvento.equals("0")) {
+            return 0; // Retorna 0 para indicar que o usuário escolheu sair
+        }
+
+        boolean temnome = retorno.contains(nomeEvento);
+        if (temnome){
+            System.out.println("Você escolheu participar do evento: " + nomeEvento);
+        }else{
+            System.out.println("Evento não encontrado.");
+        }
+        return -1; // Retorna -1 para indicar que o evento não foi encontrado
     }
 }
