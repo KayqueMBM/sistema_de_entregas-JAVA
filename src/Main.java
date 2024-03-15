@@ -10,36 +10,12 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
     static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) throws FileNotFoundException {
 
         opcoesIniciais();
     }
 
-    public static void opcoesLogin() throws FileNotFoundException {
-
-        System.out.println("""
-                1- Participar de eventos
-                2- Eventos já confirmados
-                3- Cancelar participação em evento
-                Escolha a ação:
-                """);
-        int opcao = sc.nextInt();
-
-        switch(opcao){
-            case 1:
-                Eventos eventos = new Eventos(); // Instância da classe Eventos para acessar os eventos cadastrados
-                int ret = eventos.Participar(); // Exibir lista de eventos e permitir participação
-                if (ret == 0) { opcoesLogin();}
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            default:
-                System.out.println("Opção inválida.");
-        }
-
-    }
     public static void opcoesIniciais() throws FileNotFoundException {
         System.out.println("Sistema de Eventos da Cidade Joinville - MENU");
         System.out.println("""
@@ -70,43 +46,61 @@ public class Main {
 
     }
     public static void login() throws FileNotFoundException {
+
         System.out.println("Digite seu CPF:");
         String cpf = sc.next();
         System.out.println("Digite sua senha:");
         String senha = sc.next();
 
-        Usuarios usuario = new Usuarios();
-        if (usuario.Estalogado(cpf,senha)) {
+        if (Estalogado(cpf,senha)) {
             System.out.println("Login bem-sucedido.");
-            opcoesLogin();
+            opcoesLogin(cpf);
         } else {
             System.out.println("CPF ou senha incorretos.");
             opcoesIniciais();
         }
     }
-}
-class Arquivo{
+    public static void opcoesLogin(String cpf) throws FileNotFoundException {
 
-    public void Gravar(String nomedoArquivo, String conteudo){
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomedoArquivo))) {
-            writer.write(conteudo);
-            System.out.println("Arquivo gravado com sucesso.");
-        } catch (IOException e) {
-            System.err.println("Erro ao gravar arquivo: " + e.getMessage());
+        System.out.println("""
+                1- Participar de eventos
+                2- Eventos já confirmados
+                3- Cancelar participação em evento
+                Escolha a ação:
+                """);
+        int opcao = sc.nextInt();
+
+        Eventos eventos = new Eventos(); // Instância da classe Eventos para acessar os eventos cadastrados
+        switch(opcao){
+            case 1:
+                eventos.Participar(cpf); // Exibir lista de eventos e permitir participação
+                opcoesLogin(cpf);
+                break;
+            case 2:
+                break;
+            case 3:
+                eventos.CancelarPartipacao(cpf); // Exibir lista de eventos e permitir participação
+                opcoesLogin(cpf);
+                break;
+            default:
+                System.out.println("Opção inválida.");
         }
+
     }
+    public static boolean Estalogado(String cpf, String senha) throws FileNotFoundException {
 
-    //Ler o arquivo//
-    public String Ler(String nomedoArquivo) throws FileNotFoundException
-    {
-        File file = new File(nomedoArquivo);
-        Scanner scan = new Scanner(file);
+        Arquivo arq = new Arquivo();
+        String texto = arq.Ler("c:\\temp\\usuarios.data.txt");
+        Boolean temcpf = texto.contains(cpf);
+        Boolean temsenha = texto.contains(senha);
 
-        String conteudo = "";
-        while(scan.hasNextLine()) {
-            conteudo = conteudo.concat(scan.nextLine() + "\n");
+        Boolean ret = true;
+        if (temcpf && temsenha){
+            ret = true;
+        }else{
+            ret = false;
         }
-        return conteudo;
+        return ret;
     }
 }
 class Usuario{
@@ -153,7 +147,7 @@ class Usuario{
 }
 class Usuarios{
 
-    public void Inserir(){
+    public void Inserir() throws FileNotFoundException {
         Scanner teclado = new Scanner(System.in);
         ArrayList<Usuario> lista = new ArrayList<Usuario>();
 
@@ -168,29 +162,13 @@ class Usuarios{
 
         //Gravar usuario no arquivo texto
         Arquivo arq = new Arquivo();
-        String texto = "";
+        String texto = arq.Ler("c:\\temp\\usuarios.data.txt");
 
         for (Usuario i: lista){
             texto = texto.concat(i.toString() + "\n");
         }
         arq.Gravar("c:\\temp\\usuarios.data.txt", texto);
 
-    }
-
-    public boolean Estalogado(String cpf, String senha) throws FileNotFoundException {
-
-        Arquivo arq = new Arquivo();
-        String texto = arq.Ler("c:\\temp\\usuarios.data.txt");
-        Boolean temcpf = texto.contains(cpf);
-        Boolean temsenha = texto.contains(senha);
-
-        Boolean ret = true;
-        if (temcpf && temsenha){
-            ret = true;
-        }else{
-            ret = false;
-        }
-        return ret;
     }
 }
 class Evento {
@@ -257,7 +235,8 @@ class Evento {
 class Eventos {
     ArrayList<Evento> eventos = new ArrayList<Evento>();
     Scanner teclado = new Scanner(System.in);
-    public void Inserir(){
+
+    public void Inserir() throws FileNotFoundException {
 
         Scanner teclado = new Scanner(System.in);
         String[] categorias = {"1-Festa infantil", "2-Casamento", "3-Show"};
@@ -291,7 +270,7 @@ class Eventos {
         }while (controle == 's' || controle == 'S');
 
         Arquivo arq = new Arquivo();
-        String texto = "";
+        String texto = arq.Ler("c:\\temp\\eventos.data.txt");
         for (Evento i: eventos){
             texto = texto.concat(i.toString() + "\n");
         }
@@ -299,26 +278,110 @@ class Eventos {
 
     }
 
-    public int Participar() throws FileNotFoundException {
+    public void Participar(String cpf) throws FileNotFoundException {
+
         // Ler o arquivo eventos.data
-        Arquivo arq = new Arquivo();
-        String retorno = arq.Ler("c:\\temp\\eventos.data.txt");
+        Arquivo arqler = new Arquivo();
+        String retorno = arqler.Ler("c:\\temp\\eventos.data.txt");
         System.out.println(retorno);
+
         // Pedir ao usuário que digite o nome do evento para participar
         System.out.println("Digite o nome do evento para participar (ou digite 0 para sair):");
         String nomeEvento = teclado.next();
 
         // Verificar se o usuário digitou 0 para sair
-        if (nomeEvento.equals("0")) {
-            return 0; // Retorna 0 para indicar que o usuário escolheu sair
-        }
+        /*if (nomeEvento.equals("0")) {
+
+        }*/
 
         boolean temnome = retorno.contains(nomeEvento);
         if (temnome){
             System.out.println("Você escolheu participar do evento: " + nomeEvento);
+
+            // Gravar o arquivo eventos_confirmados.data
+            Arquivo arqgravar = new Arquivo();
+            String ret = arqgravar.Ler("c:\\temp\\eventos_confirmados.data.txt");
+            String texto = "";
+            texto = ret + "Nome do Evento: " + nomeEvento  + " - CPF do usuario: " + cpf;
+            arqgravar.Gravar("c:\\temp\\eventos_confirmados.data.txt", texto);
+
         }else{
             System.out.println("Evento não encontrado.");
         }
-        return -1; // Retorna -1 para indicar que o evento não foi encontrado
+    }
+    public void CancelarPartipacao(String cpf) throws FileNotFoundException {
+
+        // Ler o arquivo eventos.data
+        Arquivo arqler = new Arquivo();
+        String retorno = arqler.Ler("c:\\temp\\eventos_confirmados.data.txt");
+        System.out.println(retorno);
+
+        // Pedir ao usuário que digite o nome do evento para participar
+        System.out.println("Digite o nome do evento para cancelar participaçao:");
+        String nomeEvento = teclado.next();
+
+        boolean temnome = retorno.contains(nomeEvento);
+        if (temnome){
+
+            String[] lista = arqler.LerArray("c:\\temp\\eventos_confirmados.data.txt");
+            String conteudo = "";
+            for (int i = 0; i< 100; i++) {
+                if (lista[i] != null) {
+                    int posicao = lista[i].indexOf("-");
+                    String n = lista[i].substring(1,posicao-1);
+                    String c = lista[i].substring(posicao+1,lista[i].length());
+                    if ((n.trim() == "NomedoEvento:"+nomeEvento) && (c.trim() == "CPFdousuario:"+cpf)) {
+
+                    } else {
+                        conteudo = conteudo + lista[i] + "\n";
+                    }
+                }
+            }
+
+            arqler.Gravar("c:\\temp\\eventos_confirmados.data.txt", conteudo);
+
+        }else{
+            System.out.println("Evento não encontrado.");
+        }
+    }
+
+}
+
+class Arquivo{
+
+    public void Gravar(String nomedoArquivo, String conteudo){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomedoArquivo))) {
+            writer.write(conteudo);
+            System.out.println("Arquivo gravado com sucesso.");
+        } catch (IOException e) {
+            System.err.println("Erro ao gravar arquivo: " + e.getMessage());
+        }
+    }
+
+    //Ler o arquivo//
+    public String Ler(String nomedoArquivo) throws FileNotFoundException
+    {
+        File file = new File(nomedoArquivo);
+        Scanner scan = new Scanner(file);
+
+        String conteudo = "";
+        while(scan.hasNextLine()) {
+            conteudo = conteudo.concat(scan.nextLine() + "\n");
+        }
+        return conteudo;
+    }
+
+    public String[] LerArray(String nomedoArquivo) throws FileNotFoundException
+    {
+        File file = new File(nomedoArquivo);
+        Scanner scan = new Scanner(file);
+
+        String[] lista = new String[100];
+        int i = 0;
+        while(scan.hasNextLine()) {
+            lista[i] = scan.nextLine();
+            i++;
+        }
+        return lista;
     }
 }
