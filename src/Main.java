@@ -53,19 +53,21 @@ public class Main {
         String senha = sc.next();
 
         if (Estalogado(cpf,senha)) {
-            System.out.println("Login bem-sucedido.");
+            System.out.println("*** Login bem-sucedido. *** \n");
             opcoesLogin(cpf);
         } else {
-            System.out.println("CPF ou senha incorretos.");
+            System.out.println("*** CPF ou senha incorretos. *** \n");
             opcoesIniciais();
         }
     }
     public static void opcoesLogin(String cpf) throws FileNotFoundException {
 
         System.out.println("""
-                1- Participar de eventos
-                2- Eventos já confirmados
-                3- Cancelar participação em evento
+                1- Participar de evento
+                2- Cancelar participação em evento
+                3- Consultar eventos mais próximos
+                4- Eventos que ja ocorreram 
+                5- VOLTAR
                 Escolha a ação:
                 """);
         int opcao = sc.nextInt();
@@ -77,10 +79,15 @@ public class Main {
                 opcoesLogin(cpf);
                 break;
             case 2:
-                break;
-            case 3:
                 eventos.CancelarPartipacao(cpf); // Exibir lista de eventos e permitir participação
                 opcoesLogin(cpf);
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                opcoesIniciais();
                 break;
             default:
                 System.out.println("Opção inválida.");
@@ -283,16 +290,12 @@ class Eventos {
         // Ler o arquivo eventos.data
         Arquivo arqler = new Arquivo();
         String retorno = arqler.Ler("c:\\temp\\eventos.data.txt");
+        System.out.println("EVENTOS");
         System.out.println(retorno);
 
         // Pedir ao usuário que digite o nome do evento para participar
         System.out.println("Digite o nome do evento para participar (ou digite 0 para sair):");
         String nomeEvento = teclado.next();
-
-        // Verificar se o usuário digitou 0 para sair
-        /*if (nomeEvento.equals("0")) {
-
-        }*/
 
         boolean temnome = retorno.contains(nomeEvento);
         if (temnome){
@@ -306,14 +309,15 @@ class Eventos {
             arqgravar.Gravar("c:\\temp\\eventos_confirmados.data.txt", texto);
 
         }else{
-            System.out.println("Evento não encontrado.");
+            System.out.println("*** Evento não encontrado. *** \n");
         }
     }
     public void CancelarPartipacao(String cpf) throws FileNotFoundException {
 
-        // Ler o arquivo eventos.data
+        // Ler o arquivo eventos_confirmados.data
         Arquivo arqler = new Arquivo();
         String retorno = arqler.Ler("c:\\temp\\eventos_confirmados.data.txt");
+        System.out.println("EVENTOS  CONFIRMADOS");
         System.out.println(retorno);
 
         // Pedir ao usuário que digite o nome do evento para participar
@@ -328,11 +332,13 @@ class Eventos {
             for (int i = 0; i< 100; i++) {
                 if (lista[i] != null) {
                     int posicao = lista[i].indexOf("-");
-                    String n = lista[i].substring(1,posicao-1);
+                    String n = lista[i].substring(0,posicao-1);
                     String c = lista[i].substring(posicao+1,lista[i].length());
-                    if ((n.trim() == "NomedoEvento:"+nomeEvento) && (c.trim() == "CPFdousuario:"+cpf)) {
 
+                    if (n.trim().equals("Nome do Evento: " + nomeEvento) && c.trim().equals("CPF do usuario: " + cpf)) {
+                        //System.out.println("Entrou");
                     } else {
+                        //System.out.println("conteudo");
                         conteudo = conteudo + lista[i] + "\n";
                     }
                 }
@@ -341,7 +347,7 @@ class Eventos {
             arqler.Gravar("c:\\temp\\eventos_confirmados.data.txt", conteudo);
 
         }else{
-            System.out.println("Evento não encontrado.");
+            System.out.println("*** Evento não encontrado. *** \n");
         }
     }
 
@@ -349,16 +355,17 @@ class Eventos {
 
 class Arquivo{
 
+    //Gravar o arquivo//
     public void Gravar(String nomedoArquivo, String conteudo){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomedoArquivo))) {
             writer.write(conteudo);
-            System.out.println("Arquivo gravado com sucesso.");
+            System.out.println("*** Arquivo gravado com sucesso.*** \n");
         } catch (IOException e) {
             System.err.println("Erro ao gravar arquivo: " + e.getMessage());
         }
     }
 
-    //Ler o arquivo//
+    //Ler o arquivo e retorna conteudo em texto//
     public String Ler(String nomedoArquivo) throws FileNotFoundException
     {
         File file = new File(nomedoArquivo);
@@ -371,6 +378,7 @@ class Arquivo{
         return conteudo;
     }
 
+    //Ler o arquivo e retorna conteudo em Array//
     public String[] LerArray(String nomedoArquivo) throws FileNotFoundException
     {
         File file = new File(nomedoArquivo);
